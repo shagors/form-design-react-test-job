@@ -99,8 +99,8 @@ const FinalTable = () => {
     tableData.map(
       (data) =>
         (
-            console.log(data),
-            allItem = (data.item).join('+'),
+            // console.log(typeof data.item),
+            allItem = (data.item.concat([ allItem])),
             subTotalGrossWeight = subTotalGrossWeight + parseFloat(data.totalGrossWeight),
             subTotalNetWeight = subTotalNetWeight + parseFloat(data.totalNetWeight),
             subTotalVolume = subTotalVolume + parseFloat(data.totalVolume),
@@ -108,10 +108,10 @@ const FinalTable = () => {
             subTotalPcsQty = subTotalPcsQty + parseInt(data.quantity)
           )
     );
-    setTotalSum({subTotalGrossWeight, subTotalNetWeight, subTotalVolume, subTotalPcsQty, subtotalPalletQty});
+    setTotalSum({subTotalGrossWeight, subTotalNetWeight, subTotalVolume, subTotalPcsQty, subtotalPalletQty, allItem});
   };
 
-  console.log();
+  console.log(totalSum);
 
   return (
     <div className="w-3/4 m-auto">
