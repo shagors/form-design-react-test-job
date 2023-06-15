@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
 
 const FinalPdf = ({ totalSum }) => {
     const {allItem, subTotalGrossWeight, subTotalNetWeight,subTotalPcsQty,subTotalVolume, subtotalPalletQty} = totalSum
-  console.log(totalSum);
+  // console.log(totalSum);
   return (
     <Document>
       <Page style={styles.body}>
@@ -92,8 +92,13 @@ const FinalPdf = ({ totalSum }) => {
             </Table>
             <Table>
             <TableBody>
-                <DataTableCell getContent={allItem} />
-                <DataTableCell getContent={subTotalGrossWeight} />
+            <TableBody>
+                    <DataTableCell getContent={(r) => r.firstName}/>
+                    <DataTableCell getContent={(r) => r.lastName}/>
+                    <DataTableCell getContent={(r) => r.dob.toLocaleString()}/>
+                    <DataTableCell getContent={(r) => r.country}/>
+                    <DataTableCell getContent={(r) => r.phoneNumber}/>
+                </TableBody>
             </TableBody>
           </Table>
 

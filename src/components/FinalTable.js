@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Nature from "../img/nature.jpg";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 
 import "react-datepicker/dist/react-datepicker.css";
@@ -10,19 +9,25 @@ import FinalPdf from "./FinalPdf";
 const FinalTable = () => {
   const [tableData, setTableData] = useState([
     {
+      buyer: "",
+      deliveryAddress: "",
+      notifyParty: "",
+      finalDestination: "",
       item: "Thermal Printer",
+      purchaseNumber: "CHB03",
       quantity: 500,
       pallet: 6,
       netWeight: 1.67,
       grossWeight: 2.87,
       totalVolume: 13,
-      totalNetWeight: "",
-      totalGrossWeight: "",
+      totalNetWeight: 0,
+      totalGrossWeight: 0,
     },
   ]);
 
   const [inputValues, setInputValues] = useState({
     newItem: "",
+    newPurchaseNumber: "",
     newQuantity: "",
     newPallet: "",
     newNetWeight: "",
@@ -32,13 +37,16 @@ const FinalTable = () => {
     newTotalGrossWeight: "",
   });
 
+  // input field
   const handleInputChange = (e) => {
     setInputValues({ ...inputValues, [e.target.name]: e.target.value });
   };
 
+  // row add
   const addRow = () => {
     const newRow = {
       item: inputValues.newItem,
+      purchaseNumber: inputValues.newPurchaseNumber,
       quantity: inputValues.newQuantity,
       pallet: inputValues.newPallet,
       netWeight: inputValues.newNetWeight,
@@ -51,6 +59,7 @@ const FinalTable = () => {
     setTableData([...tableData, newRow]);
     setInputValues({
       newItem: "",
+      newPurchaseNumber: "",
       newQuantity: "",
       newPallet: "",
       newNetWeight: "",
@@ -61,16 +70,17 @@ const FinalTable = () => {
     });
   };
 
+  // remove fields data
   const removeFields = (e, index) => {
     const data = tableData.length;
-    if (data === 1) {
-      const d = data - 1;
-      // console.log(tableData, 'im here');
+    if (data.index === data - 1) {
+      
     }
   };
 
   const [totalSum, setTotalSum] = useState(0);
 
+  // Main table data calculate
   const calculateResult = () => {
     const updatedRowsData = tableData?.map((rowData) => ({
       ...rowData,
@@ -84,8 +94,10 @@ const FinalTable = () => {
     setTableData(updatedRowsData);
   };
 
+  // SUbtotal table data calculation
   const subTotal = () => {
     let allItem = "";
+    let allPurchaseNumber = "";
     let subTotalGrossWeight = 0;
     let subTotalNetWeight = 0;
     let subTotalVolume = 0;
@@ -95,6 +107,9 @@ const FinalTable = () => {
       (data) => (
         // console.log(typeof data.item),
         (allItem = data?.item.toUpperCase().concat([, allItem])),
+        (allPurchaseNumber = data?.purchaseNumber
+          .toUpperCase()
+          .concat([, allPurchaseNumber])),
         (subTotalGrossWeight =
           subTotalGrossWeight + parseFloat(data?.totalGrossWeight)),
         (subTotalNetWeight =
@@ -111,13 +126,18 @@ const FinalTable = () => {
       subTotalPcsQty,
       subtotalPalletQty,
       allItem,
+      allPurchaseNumber,
     });
   };
 
+  // table cell empty function
   const cancel = () => {
-    // tableData?.empty();
+    while (tableData.length > 0) {
+      tableData.pop();
+    }
   };
 
+  // PDF download function
   const showDownloadLink = (totalSum) => (
     <PDFDownloadLink
       document={<FinalPdf totalSum={totalSum} />}
@@ -126,7 +146,9 @@ const FinalTable = () => {
     </PDFDownloadLink>
   );
 
-  // console.log(totalSum);
+  const [info, setInfo] = useState('')
+
+  console.log(inputValues);
 
   return (
     <div className="w-4/5 m-auto">
@@ -147,12 +169,59 @@ const FinalTable = () => {
             DATE: <span>{new Date().toLocaleDateString()}</span>
           </div>
         </div>
+        <div className="flex justify-between items-center my-2">
+          <div>
+            <textarea
+              type="text"
+              placeholder="Buyer Details"
+              name="buyer"
+              required={true}
+              value={inputValues.buyer}
+              onChange={handleInputChange}
+              rows="3"
+              cols="30"></textarea>
+          </div>
+          <div>
+            <textarea
+              type="text"
+              placeholder="Delivery Address"
+              name="deliveryAddress"
+              required={true}
+              value={inputValues.deliveryAddress}
+              onChange={handleInputChange}
+              rows="3"
+              cols="30"></textarea>
+          </div>
+          <div>
+            <textarea
+              type="text"
+              placeholder="Notify Party Details"
+              name="notifyParty"
+              required={true}
+              value={inputValues.notifyParty}
+              onChange={handleInputChange}
+              rows="3"
+              cols="30"></textarea>
+          </div>
+          <div>
+            <textarea
+              type="text"
+              placeholder="Final Destination"
+              name="finalDestination"
+              required={true}
+              value={inputValues.finalDestination}
+              onChange={handleInputChange}
+              rows="3"
+              cols="30"></textarea>
+          </div>
+        </div>
 
-        <div className="">
+        <div className="" style={{ maxWidth: "1100px" }}>
           <table className="mt-2 m-auto">
             <thead>
               <tr>
                 <th className="p-2">Description of comodity</th>
+                <th className="p-2">Purchase Order Number</th>
                 <th className="p-2">Quantity</th>
                 <th className="p-2">Pallet</th>
                 <th className="p-2">Net Weight</th>
@@ -166,6 +235,7 @@ const FinalTable = () => {
               {tableData?.map((row, index) => (
                 <tr key={index}>
                   <td>{row.item}</td>
+                  <td>{row.purchaseNumber}</td>
                   <td>{row.quantity}</td>
                   <td>{row.pallet}</td>
                   <td>{row.netWeight}</td>
@@ -182,6 +252,15 @@ const FinalTable = () => {
                     name="newItem"
                     required={true}
                     value={inputValues.newItem}
+                    onChange={handleInputChange}
+                  />
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    name="newPurchaseNumber"
+                    required={true}
+                    value={inputValues.newPurchaseNumber}
                     onChange={handleInputChange}
                   />
                 </td>
@@ -252,37 +331,47 @@ const FinalTable = () => {
             </tbody>
           </table>
 
+          {/* New Row Add button */}
           <button onClick={addRow} className="btn btn-info mb-4">
             Add Row
           </button>
+
+          {/* Calculate button */}
           <button
             onClick={calculateResult}
             className="btn btn-primary mt-3 mx-3">
             Calculate
           </button>
+
+          {/* Delete button */}
           <button className="btn btn-error" onClick={removeFields}>
             Delete Row
           </button>
 
+          {/* Sub total sheet button */}
           <button
             className="btn btn-secondary font-bold mx-3"
             onClick={subTotal}>
             Sub Total Sheet
           </button>
 
+          {/* Cancel button */}
           <button className="btn btn-warning font-bold" onClick={cancel}>
-            Cancel
+            Clear Data
           </button>
 
+          {/* Download button */}
           <button className="btn btn-success ml-3">
             {showDownloadLink(totalSum)}
           </button>
 
+          {/* Final result table */}
           <div className="flex justify-center">
             <table>
               <thead>
                 <tr>
                   <th className="p-2">Description of comodity</th>
+                  <th className="p-2">Order Number</th>
                   <th className="p-2">Gross Weight</th>
                   <th className="p-2">Net Weight</th>
                   <th className="p-2">Volume</th>
@@ -293,6 +382,7 @@ const FinalTable = () => {
               <tbody>
                 <tr>
                   <td className="text-center">{totalSum.allItem}</td>
+                  <td className="text-center">{totalSum.allPurchaseNumber}</td>
                   <td className="text-center">
                     {totalSum.subTotalGrossWeight} KG.
                   </td>
