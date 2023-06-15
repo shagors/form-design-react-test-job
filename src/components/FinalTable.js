@@ -126,7 +126,7 @@ const FinalTable = () => {
     </PDFDownloadLink>
   );
 
-  console.log(totalSum);
+  // console.log(totalSum);
 
   return (
     <div className="w-4/5 m-auto">

@@ -1,5 +1,13 @@
-import { Document, Page, StyleSheet, Text, View } from "@react-pdf/renderer";
+import {
+  Table,
+  TableHeader,
+  TableCell,
+  TableBody,
+  DataTableCell,
+} from "@david.kucsai/react-pdf-table";
+import { Document, Image, Page, StyleSheet, Text } from "@react-pdf/renderer";
 import React from "react";
+import Nature from '../img/flower.jpg'
 
 const styles = StyleSheet.create({
   body: {
@@ -8,13 +16,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 35,
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
     textAlign: "center",
   },
   author: {
-    fontSize: 12,
+    fontSize: 24,
     textAlign: "center",
-    marginBottom: 40,
+    marginBottom: 20,
   },
   subtitle: {
     fontSize: 18,
@@ -31,16 +39,15 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: 12,
-    marginBottom: 20,
+    marginBottom: 15,
     textAlign: "center",
     color: "grey",
   },
   footer: {
-    padding: "100px",
     fontSize: 12,
-    marginBottom: 20,
-    textAlign: "center",
-    color: "grey",
+    marginBottom:2,
+    color: "black",
+    alignItems: "baseline"
   },
   pageNumber: {
     position: "absolute",
@@ -54,16 +61,47 @@ const styles = StyleSheet.create({
 });
 
 const FinalPdf = ({ totalSum }) => {
+    const {allItem, subTotalGrossWeight, subTotalNetWeight,subTotalPcsQty,subTotalVolume, subtotalPalletQty} = totalSum
+  console.log(totalSum);
   return (
     <Document>
       <Page style={styles.body}>
-        <View>
-          <Text style={styles.header} fixed className="flex justify-between items-center">
-            UTTRA EXPORT PROCESSING ZONE MSSFB # 4, UTTRA EPZ, NILPHAMRI,
-            RANGPUR, BANGLADESH MOB: +8801760053135
-             Data: {new Date().toLocaleDateString()}
-          </Text>
-        </View>
+        <Image src={Nature} style={{width: "100%", height: "90px"}} />
+        <Text style={styles.author}>THT-Space Electrical Company Ltd.</Text>
+        <Text
+          style={styles.header}
+          fixed
+          className="flex justify-between items-center">
+          UTTRA EXPORT PROCESSING ZONE MSSFB # 4, UTTRA EPZ, NILPHAMRI, RANGPUR,
+          BANGLADESH MOB: +8801760053135
+        </Text>
+        <Text style={styles.title}>
+          PACKING LISTE DE COLISAGE / PACKING LIST NO. THT2301010 <br />
+          Date: {new Date().toLocaleDateString()}
+        </Text>
+        <Text style={styles.subtitle}>Order Summery</Text>
+        <Table>
+          <TableHeader>
+            <TableCell>Description Of Comodity</TableCell>
+            <TableCell>Gross Weight</TableCell>
+            <TableCell>Net Weight</TableCell>
+            <TableCell>Volume</TableCell>
+            <TableCell>Total Pallet Qty</TableCell>
+            <TableCell>Total Pcs Qty</TableCell>
+          </TableHeader>
+            </Table>
+            <Table>
+            <TableBody>
+                <DataTableCell getContent={allItem} />
+                <DataTableCell getContent={subTotalGrossWeight} />
+            </TableBody>
+          </Table>
+
+          <Text style={styles.footer}>MAERSK & NO:</Text>
+          <Text style={styles.footer}>MODEL NO: {totalSum.allItem}</Text>
+          <Text style={styles.footer}>CARTON QUANTITY ON PALLET: {subTotalPcsQty} CTNS</Text>
+          <Text style={styles.footer}>MADE IN BANGLADESH</Text>
+          <Text style={styles.footer}>PALLET NO: {subtotalPalletQty}</Text>
       </Page>
     </Document>
   );
