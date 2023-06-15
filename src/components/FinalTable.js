@@ -1,25 +1,17 @@
 import React, { useState } from "react";
 import Nature from "../img/nature.jpg";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 
 import "react-datepicker/dist/react-datepicker.css";
 
 import "./form-stac.css";
+import FinalPdf from "./FinalPdf";
 
 const FinalTable = () => {
   const [tableData, setTableData] = useState([
     {
       item: "Thermal Printer",
       quantity: 500,
-      pallet: 6,
-      netWeight: 1.67,
-      grossWeight: 2.87,
-      totalVolume: 13,
-      totalNetWeight: "",
-      totalGrossWeight: "",
-    },
-    {
-      item: "Dot Printer",
-      quantity: 300,
       pallet: 6,
       netWeight: 1.67,
       grossWeight: 2.87,
@@ -60,7 +52,7 @@ const FinalTable = () => {
     setInputValues({
       newItem: "",
       newQuantity: "",
-      newPallet:"",
+      newPallet: "",
       newNetWeight: "",
       newGrossWeight: "",
       newTotalVolume: "",
@@ -70,8 +62,11 @@ const FinalTable = () => {
   };
 
   const removeFields = (e, index) => {
-    const data = document.getElementById("orginal-tr");
-    data.remove();
+    const data = tableData.length;
+    if (data === 1) {
+      const d = data - 1;
+      // console.log(tableData, 'im here');
+    }
   };
 
   const [totalSum, setTotalSum] = useState(0);
@@ -97,24 +92,44 @@ const FinalTable = () => {
     let subtotalPalletQty = 0;
     let subTotalPcsQty = 0;
     tableData.map(
-      (data) =>
-        (
-            // console.log(typeof data.item),
-            allItem = (data.item.concat([ allItem])),
-            subTotalGrossWeight = subTotalGrossWeight + parseFloat(data.totalGrossWeight),
-            subTotalNetWeight = subTotalNetWeight + parseFloat(data.totalNetWeight),
-            subTotalVolume = subTotalVolume + parseFloat(data.totalVolume),
-            subtotalPalletQty = subtotalPalletQty + parseFloat(data.pallet),
-            subTotalPcsQty = subTotalPcsQty + parseInt(data.quantity)
-          )
+      (data) => (
+        // console.log(typeof data.item),
+        (allItem = data?.item.toUpperCase().concat([, allItem])),
+        (subTotalGrossWeight =
+          subTotalGrossWeight + parseFloat(data?.totalGrossWeight)),
+        (subTotalNetWeight =
+          subTotalNetWeight + parseFloat(data?.totalNetWeight)),
+        (subTotalVolume = subTotalVolume + parseFloat(data?.totalVolume)),
+        (subtotalPalletQty = subtotalPalletQty + parseFloat(data?.pallet)),
+        (subTotalPcsQty = subTotalPcsQty + parseInt(data?.quantity))
+      )
     );
-    setTotalSum({subTotalGrossWeight, subTotalNetWeight, subTotalVolume, subTotalPcsQty, subtotalPalletQty, allItem});
+    setTotalSum({
+      subTotalGrossWeight,
+      subTotalNetWeight,
+      subTotalVolume,
+      subTotalPcsQty,
+      subtotalPalletQty,
+      allItem,
+    });
   };
+
+  const cancel = () => {
+    // tableData?.empty();
+  };
+
+  const showDownloadLink = (totalSum) => (
+    <PDFDownloadLink
+      document={<FinalPdf totalSum={totalSum} />}
+      fileName="final-result.pdf">
+      Download PDF
+    </PDFDownloadLink>
+  );
 
   console.log(totalSum);
 
   return (
-    <div className="w-3/4 m-auto">
+    <div className="w-4/5 m-auto">
       {/* Heading for company */}
       <div className="mt-3 grid justify-center items-center align-middle">
         <p>UTTRA EXPORT PROCESSING ZONE</p>
@@ -245,13 +260,24 @@ const FinalTable = () => {
             className="btn btn-primary mt-3 mx-3">
             Calculate
           </button>
-          <button className="btn btn-error mr-3" onClick={removeFields}>
+          <button className="btn btn-error" onClick={removeFields}>
             Delete Row
           </button>
 
-          <button className="btn btn-secondary font-bold" onClick={subTotal}>
+          <button
+            className="btn btn-secondary font-bold mx-3"
+            onClick={subTotal}>
             Sub Total Sheet
           </button>
+
+          <button className="btn btn-warning font-bold" onClick={cancel}>
+            Cancel
+          </button>
+
+          <button className="btn btn-success ml-3">
+            {showDownloadLink(totalSum)}
+          </button>
+
           <div className="flex justify-center">
             <table>
               <thead>
@@ -266,12 +292,18 @@ const FinalTable = () => {
               </thead>
               <tbody>
                 <tr>
-                  <td>{totalSum.allItem}</td>
-                  <td>{totalSum.subTotalGrossWeight}</td>
-                  <td>{totalSum.subTotalNetWeight}</td>
-                  <td>{totalSum.subTotalVolume}</td>
-                  <td>{totalSum.subtotalPalletQty}</td>
-                  <td>{totalSum.subTotalPcsQty}</td>
+                  <td className="text-center">{totalSum.allItem}</td>
+                  <td className="text-center">
+                    {totalSum.subTotalGrossWeight} KG.
+                  </td>
+                  <td className="text-center">
+                    {totalSum.subTotalNetWeight} .KG
+                  </td>
+                  <td className="text-center">
+                    {totalSum.subTotalVolume} CBM.
+                  </td>
+                  <td className="text-center">{totalSum.subtotalPalletQty}</td>
+                  <td className="text-center">{totalSum.subTotalPcsQty}</td>
                 </tr>
               </tbody>
             </table>
